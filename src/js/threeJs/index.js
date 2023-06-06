@@ -2,7 +2,7 @@
  * Author  Kayson.Wan
  * Date  2022-09-08 23:28:58
  * LastEditors  Murphy.xie
- * LastEditTime  2023-04-25 16:28:45
+ * LastEditTime  2023-06-06 16:15:13
  * Description
  */
 
@@ -762,12 +762,50 @@ class ThreeJs {
 		});
 
 	/**
+	 * load gltf
+	 * @param {ArrayBuffer} aBuffer 数据
+	 * @param {Boolean} addToScene 是否
+	 * @returns
+	 */
+	loadGltfDracoBuffer = (aBuffer, addToScene = true) => {
+		const gltfLoader = new GLTFLoader(
+			LoadingManager.shareInstance.threeLoadingManager
+		);
+		const dracoLoader = new DRACOLoader(
+			LoadingManager.shareInstance.threeLoadingManager
+		);
+		dracoLoader.setDecoderPath("/static/three/draco/");
+		dracoLoader.preload();
+		gltfLoader.setDRACOLoader(this.dracoLoader);
+		// const baseDirectory = path.split("/");
+		// baseDirectory.pop();
+		return new Promise((reslove, reject) => {
+			gltfLoader.parse(
+				aBuffer,
+				`/`,
+				(gltf) => {
+					const obj = gltf.scene;
+					if (addToScene) {
+						this.threeScene.add(obj);
+					}
+					reslove(gltf);
+				},
+				(e) => {
+					reject(e);
+				}
+			);
+		});
+	};
+
+	/**
 	 * load gltf Draco
 	 * @param {*} path
 	 * @returns
 	 */
 	loadGltfDraco(path, addToScene = true) {
 		return LoadingManager.shareInstance.getModelDataByUrl(path).then((data) => {
+			console.log("xxxx", data);
+
 			const gltfLoader = new GLTFLoader(
 				LoadingManager.shareInstance.threeLoadingManager
 			);
@@ -779,10 +817,26 @@ class ThreeJs {
 			gltfLoader.setDRACOLoader(this.dracoLoader);
 			const baseDirectory = path.split("/");
 			baseDirectory.pop();
+			// return new Promise((reslove, reject) => {
+			// 	gltfLoader.parse(
+			// 		data,
+			// 		`${baseDirectory.join("/")}/`,
+			// 		(gltf) => {
+			// 			const obj = gltf.scene;
+			// 			if (addToScene) {
+			// 				this.threeScene.add(obj);
+			// 			}
+			// 			reslove(gltf);
+			// 		},
+			// 		(e) => {
+			// 			reject(e);
+			// 		}
+			// 	);
+			// });
 			return new Promise((reslove, reject) => {
-				gltfLoader.parse(
-					data,
-					`${baseDirectory.join("/")}/`,
+				gltfLoader.load(
+					path,
+					// `${baseDirectory.join("/")}/`,
 					(gltf) => {
 						const obj = gltf.scene;
 						if (addToScene) {
@@ -790,6 +844,7 @@ class ThreeJs {
 						}
 						reslove(gltf);
 					},
+					null,
 					(e) => {
 						reject(e);
 					}

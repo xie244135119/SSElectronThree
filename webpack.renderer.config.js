@@ -2,11 +2,12 @@
  * Author  Murphy.xie
  * Date  2023-04-25 11:28:03
  * LastEditors  Murphy.xie
- * LastEditTime  2023-04-25 15:48:25
+ * LastEditTime  2023-05-25 21:55:25
  * Description
  */
 const rules = require("./webpack.rules");
 const path = require("path");
+const CopyWebpackPlugin = require("copy-webpack-plugin");
 
 rules.push(
 	{
@@ -46,4 +47,19 @@ module.exports = {
 	module: {
 		rules,
 	},
+	plugins: [
+		new CopyWebpackPlugin({
+			patterns: [
+				{ from: "public", to: "public" },
+				{
+					from: "node_modules/three/examples/js/libs/draco/",
+					to: "static/three/draco",
+				},
+				{
+					from: "node_modules/three/examples/js/libs/basis/",
+					to: "static/three/basis",
+				},
+			],
+		}),
+	],
 };

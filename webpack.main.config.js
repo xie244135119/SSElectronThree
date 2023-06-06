@@ -2,10 +2,11 @@
  * Author  Murphy.xie
  * Date  2023-04-25 11:28:03
  * LastEditors  Murphy.xie
- * LastEditTime  2023-04-25 13:35:47
+ * LastEditTime  2023-05-25 21:43:56
  * Description
  */
 const path = require("path");
+
 module.exports = {
 	/**
 	 * This is the main entry point for your application, it's the first file
